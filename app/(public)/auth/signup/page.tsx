@@ -42,7 +42,8 @@ export default function SignUpPage() {
 
     onError: (error) => {
       if (error.response) {
-        toast.error(error.response.data.message);
+        const data = error.response.data as { message: string };
+        toast.error(data.message);
       } else {
         console.error("Error: ", error);
       }

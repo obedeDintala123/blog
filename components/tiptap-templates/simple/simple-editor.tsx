@@ -162,7 +162,7 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor({ value, onChange }) {
+export function SimpleEditor({ value, onChange }: { value: any; onChange: (value: any) => void }) {
   const isMobile = useIsBreakpoint();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
