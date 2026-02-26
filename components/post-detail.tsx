@@ -174,7 +174,7 @@ export const PostDetail = ({ post }: { post: IPost }) => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div
             ref={modalRef}
-            className="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200"
+            className="bg-white rounded-2xl shadow-2xl w-[90%] md:w-full max-w-md mx-4 p-6 animate-in fade-in zoom-in-95 duration-200"
           >
             {/* Modal Header */}
             <div className="flex items-center justify-between mb-5">
