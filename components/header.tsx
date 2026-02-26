@@ -24,25 +24,19 @@ import {
   Settings,
   User,
 } from "lucide-react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/app/api/api";
+
 import { useIsMobile } from "@/hooks/use-mobile";
+import Cookies from "js-cookie";
 
 export const Header = () => {
   const { data: user } = useMe();
   const isMobile = useIsMobile();
   const router = useRouter();
 
-  const queryClient = useQueryClient();
-
-  const { mutate: logout } = useMutation({
-    mutationKey: ["logout"],
-    mutationFn: () => api.post("/auth/logout"),
-    onSuccess: () => {
-      queryClient.removeQueries({ queryKey: ["me"] });
-      router.refresh();
-    },
-  });
+  const handleLogout = () => {
+    Cookies.remove("token");
+    window.location.reload();
+  };
 
   if (isMobile) {
     return (
@@ -106,7 +100,7 @@ export const Header = () => {
                 {/* Logout */}
                 <DropdownMenuItem
                   variant="destructive"
-                  onClick={() => logout()}
+                  onClick={() => handleLogout()}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout
@@ -182,7 +176,7 @@ export const Header = () => {
                 {/* Logout */}
                 <DropdownMenuItem
                   variant="destructive"
-                  onClick={() => logout()}
+                  onClick={() => handleLogout()}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Logout

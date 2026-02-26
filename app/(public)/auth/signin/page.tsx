@@ -15,6 +15,7 @@ import { api } from "@/app/api/api";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
 
 type LoginData = z.infer<typeof LoginSchema>;
 
@@ -33,18 +34,21 @@ export default function SignInPage() {
   const loginMutation = useMutation<any, AxiosError, LoginData>({
     mutationKey: ["login"],
     mutationFn: async (data) => {
-      await api.post("auth/login", data);
+      const response = await api.post("auth/login", data);
+      return response.data;
     },
 
-    onSuccess: () => {
+    onSuccess: (data) => {
+      const { token } = data;
+      Cookies.set("token", token, { expires: 7 });
       toast.success("Successful login");
       router.push("/");
     },
 
     onError: (error) => {
       if (error.response) {
-        const data = error.response.data as { message: string };
-        toast.error(data.message);
+        // const data = error.response.data as { message: string };
+        toast.error("Error signing in");
       } else {
         console.error("Error: ", error);
       }

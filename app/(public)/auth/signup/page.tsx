@@ -42,8 +42,8 @@ export default function SignUpPage() {
 
     onError: (error) => {
       if (error.response) {
-        const data = error.response.data as { message: string };
-        toast.error(data.message);
+        // const data = error.response.data as { message: string };
+        toast.error("Error signing up");
       } else {
         console.error("Error: ", error);
       }
@@ -138,7 +138,11 @@ export default function SignUpPage() {
             type="submit"
             className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-2xl transition-colors"
           >
-            {registerMutate.isPending ? <Loader2 className="animate-spin" /> : "Sign Up"}
+            {registerMutate.isPending ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              "Sign Up"
+            )}
           </Button>
         </form>
 
