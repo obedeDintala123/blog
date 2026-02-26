@@ -41,7 +41,7 @@ export const Header = () => {
   if (isMobile) {
     return (
       <header className="flex items-center justify-between w-full px-4 py-4 md:px-8 md:py-8 lg:px-12 ">
-        <Link href={""}>
+        <Link href={"/"}>
           <Image src={"/blog-logo.svg"} width={75} height={75} alt="logo" />
         </Link>
 
