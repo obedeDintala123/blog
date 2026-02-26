@@ -7,14 +7,14 @@ import { useParams } from "next/navigation";
 
 export default function PostPage() {
   const { slug } = useParams();
-  const { data } = usePostBySlug(slug as string);
+  const { data, isLoading } = usePostBySlug(slug as string);
   return (
     <div>
       <Header />
 
       <main>
         <section>
-          {data && <PostDetail post={data} />}
+          {data && <PostDetail isLoading={isLoading} post={data} />}
         </section>
       </main>
     </div>

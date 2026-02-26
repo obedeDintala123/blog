@@ -27,8 +27,15 @@ import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
 import { HorizontalRule } from "@/components/tiptap-node/horizontal-rule-node/horizontal-rule-node-extension";
 import { useState, useEffect, useRef } from "react";
+import { Skeleton } from "./ui/skeleton";
 
-export const PostDetail = ({ post }: { post: IPost }) => {
+export const PostDetail = ({
+  post,
+  isLoading,
+}: {
+  post: IPost;
+  isLoading: boolean;
+}) => {
   const router = useRouter();
   const [shareModal, setShareModal] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -83,6 +90,56 @@ export const PostDetail = ({ post }: { post: IPost }) => {
   }, [shareModal]);
 
   if (!post) return null;
+
+  if (isLoading) {
+    return (
+      <article className="w-full max-w-3xl mx-auto px-6">
+        {/* Header */}
+        <header className="mb-8">
+          <Skeleton className="h-8 w-20 mb-6" />
+          <Skeleton className="h-10 w-3/4 mb-4" />
+          <Skeleton className="h-6 w-full mb-6" />
+
+          {/* Author and Date */}
+          <div className="flex items-center justify-between border-b border-gray-200 pb-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="w-10 h-10 rounded-full" />
+              <div>
+                <Skeleton className="h-4 w-24 mb-2" />
+                <Skeleton className="h-3 w-16" />
+              </div>
+            </div>
+
+            {/* Engagement */}
+            <div className="flex items-center gap-6">
+              <Skeleton className="h-5 w-12" />
+              <Skeleton className="h-5 w-12" />
+            </div>
+          </div>
+        </header>
+
+        {/* Cover Image */}
+        <Skeleton className="mb-12 w-full h-96 rounded-lg" />
+
+        {/* Content */}
+        <div className="mt-8 space-y-4">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-5/6" />
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-4/6" />
+        </div>
+
+        {/* Footer */}
+        <footer className="mt-12 mb-8 pt-8 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <Skeleton className="h-4 w-32" />
+            <Skeleton className="h-9 w-24" />
+          </div>
+        </footer>
+      </article>
+    );
+  }
 
   return (
     <>
