@@ -35,7 +35,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useStepStore } from "@/store/useStepStore";
 import { PostCards } from "@/components/post-cards";
 import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/app/api/api";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
@@ -95,9 +95,9 @@ function StepOne() {
         </Button>
       </header>
 
-      <main className="px-4 py-4 md:px-8 md:py-8 lg:px-12 flex justify-center items-center">
-        <form className="lg:max-w-[65%] w-full grid lg:grid-cols-[2fr_1fr] gap-8">
-          <section className="space-y-4">
+      <main className="px-4 py-4 md:px-8 md:py-8 lg:px-12 flex justify-center items-start min-h-screen">
+        <form className="w-full lg:max-w-[65%] flex flex-col lg:grid lg:grid-cols-[2fr_1fr] gap-8">
+          <section className="space-y-4 min-w-0">
             <div className="space-y-2">
               <Label className="font-bold text-base">Title</Label>
               <Input
@@ -114,7 +114,7 @@ function StepOne() {
             </div>
             <div className="space-y-2">
               <Label className="font-bold text-base">Body</Label>
-              <div className="border border-[#d9d9d9] h-[40vh] rounded-md relative max-w-full">
+              <div className="border border-[#d9d9d9] h-[40vh] rounded-md relative overflow-hidden">
                 <Controller
                   name="content"
                   control={control}
@@ -129,7 +129,8 @@ function StepOne() {
               </div>
             </div>
           </section>
-          <section className="space-y-4 grid md:grid-cols-2 md:grid-rows-1 md:space-x-8 lg:space-x-0 lg:grid-cols-1 lg:grid-rows-[1fr_2fr]">
+
+          <section className="space-y-4 min-w-0">
             <Card className="w-full">
               <CardHeader>
                 <CardTitle>Category</CardTitle>
@@ -162,14 +163,13 @@ function StepOne() {
               <CardHeader>
                 <CardTitle>Image</CardTitle>
               </CardHeader>
-              <CardContent className="flex flex-col justify-center items-center gap-4 h-full">
+              <CardContent className="flex flex-col justify-center items-center gap-4">
                 <div className="border border-[#d9d9d9] rounded-md py-10 w-1/2 place-content-center place-items-center">
                   <ImageIcon
                     strokeWidth={1}
                     className="size-14 text-[#d9d9d9]"
                   />
                 </div>
-
                 <span className="text-[#d9d9d9]">Not available</span>
               </CardContent>
             </Card>
@@ -185,22 +185,29 @@ function StepTwo() {
   const isSaved = localStorage.getItem("formData");
   const savedData: PostData | null = isSaved ? JSON.parse(isSaved) : null;
   const [selectedType, setSelectedType] = useState<PostCardType | null>(null);
-  const { decrStep } = useStepStore();
+  const queryClient = useQueryClient();
+  const { decrStep, reset } = useStepStore();
   const createPost = useMutation({
     mutationKey: ["create-post"],
-    mutationFn: async (data: PostData & { postType: PostCardType | null; published: boolean }) => {
+    mutationFn: async (
+      data: PostData & { postType: PostCardType | null; published: boolean },
+    ) => {
       await api.post("user/post", data);
     },
 
-    onSuccess: () => {
-      router.push("/home");
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: ["public-posts"] });
       toast.success("Post created successfully!");
-      localStorage.removeItem("formData");
-    },
+      router.push("/home");
 
+      setTimeout(() => {
+        localStorage.removeItem("formData");
+        reset();
+      }, 300);
+    },
     onError: (error: unknown) => {
       if (axios.isAxiosError(error) && error.response) {
-        toast.error("Error: Try again later.");
+        toast.error("Error creating post");
       } else {
         console.error("Error: ", error);
       }
@@ -208,7 +215,13 @@ function StepTwo() {
   });
 
   const onSubmit = () => {
-    if (!savedData || !savedData.title || !savedData.description || !savedData.category || !savedData.content) {
+    if (
+      !savedData ||
+      !savedData.title ||
+      !savedData.description ||
+      !savedData.category ||
+      !savedData.content
+    ) {
       toast.error("Please fill in all required fields");
       return;
     }

@@ -5,8 +5,10 @@ import { PostCards } from "@/components/post-cards";
 import { usePosts } from "@/lib/requests";
 import { useRouter } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useLivePosts } from "@/hooks/use-live-posts";
 
 export default function Home() {
+  useLivePosts();
   const { data: posts, isLoading } = usePosts();
   const router = useRouter();
 

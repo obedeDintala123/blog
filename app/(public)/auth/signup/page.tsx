@@ -42,8 +42,15 @@ export default function SignUpPage() {
 
     onError: (error) => {
       if (error.response) {
-        // const data = error.response.data as { message: string };
-        toast.error("Error signing up");
+        const status = error.response.status;
+
+        if (status === 409) {
+          toast.error("User already exists");
+        } else if (status === 400) {
+          toast.error("Invalid data. Check your inputs");
+        } else {
+          toast.error("Error signing up. Try again later.");
+        }
       } else {
         console.error("Error: ", error);
       }

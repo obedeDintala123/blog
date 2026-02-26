@@ -47,8 +47,15 @@ export default function SignInPage() {
 
     onError: (error) => {
       if (error.response) {
-        // const data = error.response.data as { message: string };
-        toast.error("Error signing in");
+        const status = error.response.status;
+
+        if (status === 401) {
+          toast.error("Invalid email or password");
+        } else if (status === 404) {
+          toast.error("User not found");
+        } else {
+          toast.error("Error signing in. Try again later.");
+        }
       } else {
         console.error("Error: ", error);
       }

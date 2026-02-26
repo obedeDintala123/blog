@@ -63,8 +63,6 @@ import { useIsBreakpoint } from "@/hooks/use-is-breakpoint";
 import { useWindowSize } from "@/hooks/use-window-size";
 import { useCursorVisibility } from "@/hooks/use-cursor-visibility";
 
-// --- Components ---
-
 // --- Lib ---
 import { handleImageUpload, MAX_FILE_SIZE } from "@/lib/tiptap-utils";
 
@@ -81,14 +79,13 @@ const MainToolbarContent = ({
   isMobile: boolean;
 }) => {
   return (
-    <div className="sticky top-0 z-10 border-none flex items-center justify-between overflow-x-auto w-full px-4 py-2 mt-2 bg-white">
+    <div className="flex items-center justify-between w-full px-4 py-2 mt-2 bg-white">
       <ToolbarGroup>
         <HeadingDropdownMenu levels={[1, 2, 3, 4]} portal={isMobile} />
         <ListDropdownMenu
           types={["bulletList", "orderedList", "taskList"]}
           portal={isMobile}
         />
-
         <CodeBlockButton />
       </ToolbarGroup>
 
@@ -120,15 +117,8 @@ const MainToolbarContent = ({
       <ToolbarSeparator />
 
       <ToolbarGroup>
-        <ImageUploadButton
-          hideWhenUnavailable={true}
-          showShortcut={true}
-          onInserted={() => console.log("Image inserted!")}
-          text="Add"
-        />
+        <ImageUploadButton text="Add" />
       </ToolbarGroup>
-
-      {isMobile && <ToolbarSeparator />}
     </div>
   );
 };
@@ -162,13 +152,20 @@ const MobileToolbarContent = ({
   </>
 );
 
-export function SimpleEditor({ value, onChange }: { value: any; onChange: (value: any) => void }) {
+export function SimpleEditor({
+  value,
+  onChange,
+}: {
+  value: any;
+  onChange: (value: any) => void;
+}) {
   const isMobile = useIsBreakpoint();
   const { height } = useWindowSize();
   const [mobileView, setMobileView] = useState<"main" | "highlighter" | "link">(
     "main",
   );
   const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarHeight, setToolbarHeight] = useState(0);
 
   const editor = useEditor({
     immediatelyRender: false,
@@ -221,19 +218,28 @@ export function SimpleEditor({ value, onChange }: { value: any; onChange: (value
     }
   }, [isMobile, mobileView]);
 
+  // atualiza a altura do toolbar para o padding do editor
+  useEffect(() => {
+    if (toolbarRef.current) {
+      setToolbarHeight(toolbarRef.current.getBoundingClientRect().height);
+    }
+  }, [mobileView]);
+
   return (
     <div className="simple-editor-wrapper flex flex-col h-full">
       <EditorContext.Provider value={{ editor }}>
         <Toolbar
           ref={toolbarRef}
-          style={{
-            ...(isMobile
+          style={
+            isMobile
               ? {
-                  bottom: `calc(100% - ${height - rect.y}px)`,
+                  position: "sticky",
+                  top: 0,
+                  zIndex: 50,
                 }
-              : {}),
-          }}
-          className="flex-shrink-0 sticky top-0 z-10 bg-white"
+              : {}
+          }
+          className="flex-shrink-0 bg-white border-b border-gray-200"
         >
           {mobileView === "main" ? (
             <MainToolbarContent
