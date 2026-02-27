@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Provider from "@/context/provider";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Blog",
@@ -32,6 +33,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-satoshi antialiased`}>
         <Provider>{children}</Provider>
+        <Analytics />
         <Toaster richColors />
       </body>
     </html>
