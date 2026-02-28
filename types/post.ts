@@ -11,9 +11,10 @@ export interface IPost {
   category: Category;
   postType: PostCardType;
   authorId: number;
-  author?:{
+  likedByMe?: boolean;
+  author?: {
     name: string;
-  }
+  };
   _count: {
     comments: 0;
     likedBy: 0;

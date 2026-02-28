@@ -183,7 +183,7 @@ export const PostDetail = ({
             <div className="flex items-center gap-6">
               <LikeButton
                 count={post._count.likedBy}
-                likedByMe={post.likedByMe}
+                likedByMe={post.likedByMe ?? false}
                 onClick={handleLike}
               />
               <button className="flex items-center gap-2 hover:text-blue-500 transition-colors">
@@ -337,7 +337,10 @@ function RichContent({ content }: { content: any }) {
   );
 }
 
-function AlertSignIn({ openLikeDialog, setOpenLikeDialog }) {
+function AlertSignIn({ openLikeDialog, setOpenLikeDialog }: {
+  openLikeDialog: boolean,
+  setOpenLikeDialog: (value: boolean) => void;
+}) {
   const router = useRouter();
 
   return (
